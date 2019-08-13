@@ -1,4 +1,4 @@
-import discord, json, os
+import discord, json
 
 from config import *
 
@@ -7,12 +7,13 @@ locationLookup = None
 
 client = discord.Client()
 
-def locationMatches (locArr):
+def locationMatches (loc):
+	if loc in commonAbbrevs:
+		return [ commonAbbrevs[loc] ]
+	if loc in locationLookup:
+		return [ locationLookup[loc] ]
+	locArr = loc.split(' ')
 	if len(locArr) == 1:
-		if locArr[0] in commonAbbrevs:
-			return [ commonAbbrevs[locArr[0]] ]
-		if locArr[0] in locationLookup:
-			return [ locationLookup[locArr[0]] ]
 		return [ s for s in locationLookup if locArr[0] in s ]
 	elif len(locArr) > 1:
 		matchArray = []
@@ -41,7 +42,7 @@ async def parseMessage (message, beforeList = []):
 	if '!where' in message.content:
 		whereSplit = message.content.split('!where')
 		for raw in whereSplit[1:]:
-			matchingArray = locationMatches(raw.strip().lower().split(' '))
+			matchingArray = locationMatches(raw.strip().lower())
 			if len(matchingArray) == 1:
 				if matchingArray[0] not in beforeList:
 					found = locations[locationLookup[matchingArray[0]]]
@@ -72,10 +73,10 @@ async def on_message_edit (before, after):
 	if '!where' in before.content:
 		beforeSplit = before.content.split('!where')
 		for loc in beforeSplit[1:]:
-			matches = locationMatches(loc.strip().lower().split(' '))
+			matches = locationMatches(loc.strip().lower())
 			if len(matches) == 1:
 				beforeList.append(matches[0])
 	await parseMessage(after, beforeList)
 
 reloadData()
-client.run(os.environ.get('discord_token'))
+client.run(clientToken)
