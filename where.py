@@ -1,4 +1,4 @@
-import discord, json
+import discord, json, os
 
 from config import *
 
@@ -79,4 +79,4 @@ async def on_message_edit (before, after):
 	await parseMessage(after, beforeList)
 
 reloadData()
-client.run(clientToken)
+client.run(os.environ.get('discord_token'))
