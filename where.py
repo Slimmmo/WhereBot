@@ -11,7 +11,7 @@ def locationMatches (loc):
 	if loc in commonAbbrevs:
 		return [ commonAbbrevs[loc] ]
 	if loc in locationLookup:
-		return [ locationLookup[loc] ]
+		return [ loc ]
 	locArr = loc.split(' ')
 	if len(locArr) == 1:
 		return [ s for s in locationLookup if locArr[0] in s ]
